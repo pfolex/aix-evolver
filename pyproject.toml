@@ -1,0 +1,64 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "aix-evolver"
+version = "0.1.0"
+description = "Elastic Reasoning Self-Improvement Engine: Trains local AI models on reasoning while maintaining parameter frugality and dynamically expanding modular capacity on demand."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [
+    { name = "Alex Pfeil", email = "alex@pfolex.io" }
+]
+keywords = [
+    "reasoning",
+    "self-play",
+    "reinforcement-learning",
+    "deepseek-r1",
+    "lora",
+    "elastic-growth",
+    "local-ai",
+    "ollama"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence"
+]
+dependencies = [
+    "torch>=2.0.0",
+    "transformers>=4.40.0",
+    "peft>=0.10.0",
+    "safetensors>=0.4.0",
+    "rich>=13.0.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "ruff>=0.3.0"
+]
+
+[project.scripts]
+aix-evolver = "aix_evolver.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["aix_evolver"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
