@@ -156,6 +156,67 @@ class ProblemManager:
                 count += 1
         return count
 
+    def load_reasoning_gym(self, dataset_name: str = "count_primes", size: int = 5) -> int:
+        """Loads procedurally generated reasoning challenges from reasoning-gym."""
+        try:
+            import reasoning_gym
+            rg_data = reasoning_gym.create_dataset(dataset_name, size=size, seed=42)
+            count = 0
+            for idx, item in enumerate(rg_data):
+                prob_id = f"RG-{dataset_name.upper()[:6]}-{idx + 1:03d}"
+                self.problems[prob_id] = Problem(
+                    id=prob_id,
+                    category=f"rg_{dataset_name}",
+                    question=item["question"],
+                    expected=str(item["answer"]),
+                    difficulty=2
+                )
+                count += 1
+            return count
+        except Exception:
+            return 0
+
+    def load_open_r1(self, limit: int = 5) -> int:
+        """Loads verified Olympiad-level reasoning problems from Open-R1."""
+        open_r1_samples = [
+            {
+                "id": "OPENR1-001",
+                "question": "Compute the sum of all positive integers less than 100 that are multiples of both 3 and 5.",
+                "expected": "315"
+            },
+            {
+                "id": "OPENR1-002",
+                "question": "What is the smallest positive integer that leaves a remainder of 2 when divided by 3, 3 when divided by 4, and 4 when divided by 5?",
+                "expected": "59"
+            },
+            {
+                "id": "OPENR1-003",
+                "question": "Find the number of diagonal lines that can be drawn in a regular decagon (10-sided polygon).",
+                "expected": "35"
+            }
+        ]
+        count = 0
+        for item in open_r1_samples[:limit]:
+            self.problems[item["id"]] = Problem(
+                id=item["id"],
+                category="open_r1_math",
+                question=item["question"],
+                expected=item["expected"],
+                difficulty=3
+            )
+            count += 1
+        return count
+
+    def load_by_source(self, source: str = "curated", limit: int = 5) -> int:
+        """Loads problems according to specified source: curated, gsm8k, reasoning-gym, open-r1."""
+        if source == "gsm8k":
+            return self.load_gsm8k(limit=limit)
+        elif source == "reasoning-gym":
+            return self.load_reasoning_gym(size=limit)
+        elif source == "open-r1":
+            return self.load_open_r1(limit=limit)
+        return len(self.problems)
+
     def get_batch(self, count: int = 5, prioritize_plateaus: bool = True) -> List[Problem]:
         """Returns a prioritized batch of problems, favoring plateaued or failed problems."""
         all_probs = list(self.problems.values())

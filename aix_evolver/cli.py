@@ -64,12 +64,17 @@ def run_evolution(
     steps: int = 5,
     model: str = "aix",
     group_size: int = 3,
+    source: str = "curated",
     dry_run: bool = False
 ):
     render_banner()
-    console.print(f"[bold cyan]Starting Self-Evolution Loop on model '[bold yellow]{model}[/bold yellow]' for {steps} steps...[/bold cyan]\n")
+    console.print(
+        f"[bold cyan]Starting Self-Evolution Loop on model '[bold yellow]{model}[/bold yellow]' "
+        f"using source '[bold green]{source}[/bold green]' for {steps} steps...[/bold cyan]\n"
+    )
 
     manager = ProblemManager()
+    manager.load_by_source(source=source, limit=steps)
     generator = RolloutGenerator(model_name=model)
     verifier = ReasoningVerifier()
     brain = ElasticBrain()
@@ -150,6 +155,13 @@ def main():
     evolve_p.add_argument("--steps", type=int, default=5, help="Number of reasoning steps to evolve")
     evolve_p.add_argument("--model", type=str, default="aix", help="Target Ollama model name")
     evolve_p.add_argument("--group-size", type=int, default=3, help="Number of rollouts per problem")
+    evolve_p.add_argument(
+        "--source",
+        type=str,
+        default="curated",
+        choices=["curated", "gsm8k", "reasoning-gym", "open-r1"],
+        help="Problem source dataset (curated, gsm8k, reasoning-gym, open-r1)"
+    )
     evolve_p.add_argument("--dry-run", action="store_true", help="Simulate weight updates for fast validation")
 
     # status command
@@ -158,7 +170,13 @@ def main():
     args = parser.parse_args()
 
     if args.command == "evolve":
-        run_evolution(steps=args.steps, model=args.model, group_size=args.group_size, dry_run=args.dry_run)
+        run_evolution(
+            steps=args.steps,
+            model=args.model,
+            group_size=args.group_size,
+            source=args.source,
+            dry_run=args.dry_run
+        )
     elif args.command == "status":
         run_status()
     else:

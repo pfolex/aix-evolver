@@ -31,3 +31,18 @@ def test_problem_manager_record_attempt():
     manager.record_attempt(prob_id, success=True)
     assert manager.problems[prob_id].success_count == 1
     assert manager.problems[prob_id].total_attempts == 1
+
+
+def test_problem_manager_reasoning_gym():
+    manager = ProblemManager()
+    count = manager.load_reasoning_gym(dataset_name="count_primes", size=2)
+    assert count == 2
+    assert any("RG-COUNT_" in pid for pid in manager.problems.keys())
+
+
+def test_problem_manager_open_r1():
+    manager = ProblemManager()
+    count = manager.load_open_r1(limit=2)
+    assert count == 2
+    assert "OPENR1-001" in manager.problems
+

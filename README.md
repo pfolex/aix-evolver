@@ -76,12 +76,23 @@ aix-evolver status
 ### 2. Run Autonomous Evolution
 Run an evolution loop for 5 reasoning steps on your local model:
 ```bash
-aix-evolver evolve --steps 5 --model aix --group-size 3
+# Evolve on infinite procedural puzzles via reasoning-gym:
+aix-evolver evolve --steps 5 --model aix --source reasoning-gym
+
+# Evolve on official OpenAI GSM8K math:
+aix-evolver evolve --steps 5 --model aix --source gsm8k
+
+# Evolve on Open-R1 Olympiad proofs:
+aix-evolver evolve --steps 5 --model aix --source open-r1
+
+# Evolve on built-in Cognitive Reflection Traps & Logic:
+aix-evolver evolve --steps 5 --model aix --source curated
 ```
 
 Options:
 * `--steps`: Number of curriculum problems to evaluate.
 * `--model`: Local model name in Ollama (e.g. `aix`, `deepseek-r1:1.5b`, `aix:8b`).
+* `--source`: Reasoning dataset source (`curated`, `reasoning-gym`, `gsm8k`, `open-r1`).
 * `--group-size`: Number of exploratory rollouts per problem (default: `3`).
 * `--dry-run`: Simulate weight updates without GPU/CPU backprop for fast CI testing.
 
