@@ -217,9 +217,23 @@ class ProblemManager:
             return self.load_open_r1(limit=limit)
         return len(self.problems)
 
-    def get_batch(self, count: int = 5, prioritize_plateaus: bool = True) -> List[Problem]:
-        """Returns a prioritized batch of problems, favoring plateaued or failed problems."""
+    def get_batch(
+        self,
+        count: int = 5,
+        prioritize_plateaus: bool = True,
+        source: Optional[str] = None
+    ) -> List[Problem]:
+        """Returns a prioritized batch of problems, filtering by source and favoring plateaued problems."""
         all_probs = list(self.problems.values())
+        if source == "reasoning-gym":
+            all_probs = [p for p in all_probs if p.id.startswith("RG-") or p.category.startswith("rg_")]
+        elif source == "gsm8k":
+            all_probs = [p for p in all_probs if p.id.startswith("GSM8K")]
+        elif source == "open-r1":
+            all_probs = [p for p in all_probs if p.id.startswith("OPENR1")]
+        elif source == "curated":
+            all_probs = [p for p in all_probs if not p.id.startswith("RG-") and not p.id.startswith("GSM8K") and not p.id.startswith("OPENR1")]
+
         if prioritize_plateaus:
             # Sort: plateaued first, then lowest success rate, then least attempted
             all_probs.sort(key=lambda p: (not p.is_plateaued, p.success_rate, -p.total_attempts))

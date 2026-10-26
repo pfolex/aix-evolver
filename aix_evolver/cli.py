@@ -80,7 +80,7 @@ def run_evolution(
     brain = ElasticBrain()
     trainer = ElasticTrainer(dry_run=dry_run)
 
-    problems = manager.get_batch(count=steps)
+    problems = manager.get_batch(count=steps, source=source)
 
     for step_idx, problem in enumerate(problems, 1):
         console.print(f"\n[bold white]═══ Step {step_idx}/{steps}: Problem [cyan]{problem.id}[/cyan] ({problem.category}) ═══[/bold white]")
