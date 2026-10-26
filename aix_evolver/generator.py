@@ -20,9 +20,12 @@ class RolloutResult:
 
     @property
     def full_text(self) -> str:
+        parts = []
+        if self.thinking:
+            parts.append(f"<think>\n{self.thinking}\n</think>")
         if self.content:
-            return self.content
-        return self.thinking
+            parts.append(self.content)
+        return "\n\n".join(parts) if parts else ""
 
 
 class RolloutGenerator:
